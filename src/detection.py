@@ -10,7 +10,11 @@ logger = logging.getLogger(__name__)
 
 def get_face_profile(image_path):
     # Assumes image name is client/agent name
-    model = DeepFace.represent(img_path=image_path)
+    try:
+        model = DeepFace.represent(img_path=image_path)
+    except ValueError:
+        logger.warning("No face detected, skipping image")
+        return None
     return np.array(model[0]["embedding"])
 
 

@@ -65,13 +65,17 @@ class GUI:
         clientFilenameInput = self.open_file_dialog("Select Client Profiles")
         # TODO Check validity of filename
         self.clientFilename.set(clientFilenameInput)
+        if self.agentFilename.get() != "No Agents Selected":
+            self.trigger_compare()
 
     def select_agents(self):
         agentFilenameInput = self.open_file_dialog("Select Agent Profiles")
         # TODO Check validity of filename
         self.agentFilename.set(agentFilenameInput)
+        if self.clientFilename.get() != "No Clients Selected":
+            self.trigger_compare()
 
-    def compare(self):
+    def trigger_compare(self):
         self.mode = 'COMPARE'
         pass
 
