@@ -5,3 +5,6 @@ agentLabelPos = [860, 90]
 
 clientButtonPos = [100, 50]
 agentButtonPos = [800, 50]
+
+
+profile_csv_path = "client_profiles.csv"
