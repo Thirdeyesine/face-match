@@ -6,6 +6,7 @@ import os
 import csv
 import time
 import ast
+import heapq
 import numpy as np
 logger = logging.getLogger(__name__)
 
@@ -79,11 +80,19 @@ def compare_profiles(gui):
         print(clientScores)
 
         # TODO Get and display best scores and corresponding profiles
+        
+        bestClientMatches = heapq.nsmallest(4, clientScores, key=clientScores.get)
+        logger.debug(f"Best client matches for {agentProfile}: {bestClientMatches}")
+        print(bestClientMatches)
 
 
+        gui.display_clients(bestClientMatches) # TODO Generalize number of clients shown somehow, current only accepts 4
+
+        
         gui.nextAgentButton.place(x=agentButtonPos[0], y=agentButtonPos[1] + 100)
         gui.root.mainloop()
         gui.agentPic.place_forget()
+        gui.forget_clients()
         gui.nextAgentButton.place_forget()
     gui.progressBarLabel.place_forget()
     gui.progressBar.place_forget()

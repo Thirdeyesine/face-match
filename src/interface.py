@@ -96,6 +96,27 @@ class GUI:
         self.agentPic.place(x=250, y=150)
         self.root.update()
 
+    def display_clients(self, clientList):
+        imgs = []
+        self.clientPics = []
+        for i, client in enumerate(clientList):
+            imgs.append(ImageTk.PhotoImage(Image.open(client).resize((100,100), Image.DEFAULT_STRATEGY)))
+
+            self.clientPics.append(Label(self.primaryFrame, image=imgs[i]))
+            self.clientPics[i].image_names=imgs[i]
+        
+        # TODO Generalize
+        self.clientPics[0].place(x=450, y=150)
+        self.clientPics[1].place(x=550, y=150)
+        self.clientPics[2].place(x=450, y=250)
+        self.clientPics[3].place(x=550, y=250)
+        self.root.update
+
+    def forget_clients(self):
+        for clientPic in self.clientPics:
+            clientPic.place_forget()
+        self.root.update
+
     def load_profiles(self):
         self.mode = 'GENERATE'
         imagesFilenameInput = self.open_file_dialog("Select Images Folder", mode='DIR')
