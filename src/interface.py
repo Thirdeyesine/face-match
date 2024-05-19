@@ -34,6 +34,8 @@ class GUI:
         self.clientLabel.place(x=clientLabelPos[0], y=clientLabelPos[1], anchor="center")
         self.agentLabel = Label(self.primaryFrame, textvariable=self.agentFilename)
         self.agentLabel.place(x=agentLabelPos[0], y=agentLabelPos[1], anchor="center")
+        
+
 
         # TODO Save and load the previous client/agent directory on each run.
         # Define and place buttons
@@ -43,9 +45,13 @@ class GUI:
         self.selectAgentsButton.place(x=agentButtonPos[0],y=agentButtonPos[1])
         self.generateProfilesButton = Button(self.primaryFrame, text="Generate Profiles", command=self.load_profiles)
         self.generateProfilesButton.place(x=clientButtonPos[0],y=clientButtonPos[1] + 200)
+        self.nextAgentButton = Button(self.primaryFrame, text="Next Agent", command=self.root.quit)
 
+        
         self.progressBar = ttk.Progressbar(self.primaryFrame)
-
+        self.progressBarText = StringVar()
+        self.progressBarText.set("Awaiting Process")
+        self.progressBarLabel = Label(self.primaryFrame, textvariable=self.progressBarText)
 
 
     def open_file_dialog(self, title, mode: str = 'FILE') -> str:
@@ -75,9 +81,12 @@ class GUI:
         if self.clientFilename.get() != "No Clients Selected":
             self.trigger_compare()
 
+
     def trigger_compare(self):
         self.mode = 'COMPARE'
-        pass
+        self.progressBar.place(x=agentButtonPos[0], y=agentButtonPos[1] + 200)
+        self.progressBarLabel.place(x=agentButtonPos[0], y=agentButtonPos[1] + 300)
+        self.root.quit()
 
     def load_profiles(self):
         self.mode = 'GENERATE'
@@ -90,5 +99,6 @@ class GUI:
         self.csvDestinationFilename = csvDestinationFilenameInput
         self.imagesFilename = imagesFilenameInput
         self.progressBar.place(x=agentButtonPos[0], y=agentButtonPos[1] + 200)
+        self.progressBarLabel.place(x=agentButtonPos[0], y=agentButtonPos[1] + 300)
         self.root.quit()
 

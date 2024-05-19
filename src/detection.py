@@ -18,6 +18,7 @@ def get_face_profile(image_path):
     return np.array(model[0]["embedding"])
 
 
+
 print(np.linalg.norm(get_face_profile("data/stock_twins_1.jpg") - get_face_profile("data/stock_man.jpg")))
 print(np.linalg.norm(get_face_profile("data/stock_twins_1.jpg") - get_face_profile("data/stock_twins_2.jpg")))
 
