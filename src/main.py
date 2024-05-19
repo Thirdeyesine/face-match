@@ -20,14 +20,17 @@ def main():
         gui.root.mainloop() 
         match gui.mode:
             case 'DEFAULT':
-                pass
+                break
             case 'COMPARE':
                 compare_profiles(gui)
                 gui.mode = 'DEFAULT'
-                break
+                gui.primaryFrame.place(x=0,y=0)
+                gui.processingFrame.place_forget()
             case 'GENERATE':
                 generate_profiles(gui)
                 gui.mode = 'DEFAULT'
+                gui.primaryFrame.place(x=0,y=0)
+                gui.processingFrame.place_forget()
 
     logger.info('EXIT')
     gui.root.quit()
@@ -77,26 +80,26 @@ def compare_profiles(gui):
             clientScores[clientProfile] = np.linalg.norm(agentProfileDict[agentProfile] - clientProfileDict[clientProfile]) # Magnitude of the distance between profile vectors
             gui.progressBar.step((1/numberOfClients)*100)
             gui.root.update()
-        print(clientScores)
+
+        if ignoreIdenticalImages:
+            filteredScores = {k: v for k, v in clientScores.items() if v >= identicalProfileThreshold}
+            clientScores = filteredScores
 
         # TODO Get and display best scores and corresponding profiles
         
         bestClientMatches = heapq.nsmallest(4, clientScores, key=clientScores.get)
         logger.debug(f"Best client matches for {agentProfile}: {bestClientMatches}")
-        print(bestClientMatches)
-
 
         gui.display_clients(bestClientMatches) # TODO Generalize number of clients shown somehow, current only accepts 4
-
-        
-        gui.nextAgentButton.place(x=agentButtonPos[0], y=agentButtonPos[1] + 100)
+        gui.nextAgentButton.place(x=nextAgentButtonPos[0], y=nextAgentButtonPos[1], anchor="center")
         gui.root.mainloop()
         gui.agentPic.place_forget()
         gui.forget_clients()
         gui.nextAgentButton.place_forget()
     gui.progressBarLabel.place_forget()
     gui.progressBar.place_forget()
-
+    gui.clientFilename.set("No Clients Selected")
+    gui.agentFilename.set("No Agents Selected")
 
 def generate_profiles(gui):
     """

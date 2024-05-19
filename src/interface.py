@@ -14,7 +14,7 @@ class GUI:
 
     # Initialize window
     root = Tk() 
-    root.geometry(rootWindowSize)
+    root.geometry(rootWindowSizeStr)
 
     # Define and default directories 
     clientFilename = StringVar()
@@ -27,8 +27,10 @@ class GUI:
     def __init__(self) -> None:
         # TODO Generalize frame sizes using window size in config
         # TODO Make widget position proportional to frame size
-        self.primaryFrame = Frame(self.root, height=500, width=1000, highlightbackground="red", highlightthickness=1)
+        self.primaryFrame = Frame(self.root, height=500, width=1000, highlightbackground="red", highlightthickness=0)
         self.primaryFrame.place(x=0,y=0)
+
+        self.processingFrame = Frame(self.root, height=500, width=1000, highlightbackground="blue", highlightthickness=0)
 
         # Define and place labels
         self.clientLabel = Label(self.primaryFrame, textvariable=self.clientFilename)
@@ -39,18 +41,18 @@ class GUI:
         # TODO Save and load the previous client/agent directory on each run.
         # Define and place buttons
         self.selectClientsButton = Button(self.primaryFrame, text="Select Clients", command=self.select_clients)
-        self.selectClientsButton.place(x=clientButtonPos[0],y=clientButtonPos[1])
+        self.selectClientsButton.place(x=clientButtonPos[0],y=clientButtonPos[1], anchor="center")
         self.selectAgentsButton = Button(self.primaryFrame, text="Select Agents", command=self.select_agents)
-        self.selectAgentsButton.place(x=agentButtonPos[0],y=agentButtonPos[1])
+        self.selectAgentsButton.place(x=agentButtonPos[0],y=agentButtonPos[1], anchor="center")
         self.generateProfilesButton = Button(self.primaryFrame, text="Generate Profiles", command=self.load_profiles)
-        self.generateProfilesButton.place(x=clientButtonPos[0],y=clientButtonPos[1] + 200)
-        self.nextAgentButton = Button(self.primaryFrame, text="Next Agent", command=self.root.quit)
+        self.generateProfilesButton.place(x=generateButtonPos[0],y=generateButtonPos[1], anchor="center")
+        self.nextAgentButton = Button(self.processingFrame, text="Next Agent", command=self.root.quit)
 
         # Loading bar and text
-        self.progressBar = ttk.Progressbar(self.primaryFrame)
+        self.progressBar = ttk.Progressbar(self.processingFrame)
         self.progressBarText = StringVar()
         self.progressBarText.set("Awaiting Process")
-        self.progressBarLabel = Label(self.primaryFrame, textvariable=self.progressBarText)
+        self.progressBarLabel = Label(self.processingFrame, textvariable=self.progressBarText, anchor="center", font='Helvetica 18 bold')
 
 
     def open_file_dialog(self, title, mode: str = 'FILE') -> str:
@@ -83,17 +85,19 @@ class GUI:
 
     def trigger_compare(self):
         self.mode = 'COMPARE'
-        self.progressBar.place(x=agentButtonPos[0], y=agentButtonPos[1] + 200)
-        self.progressBarLabel.place(x=agentButtonPos[0], y=agentButtonPos[1] + 300)
+        self.primaryFrame.place_forget()
+        self.processingFrame.place(x=0,y=0)
+        self.progressBar.place(x=progressBarPos[0], y=progressBarPos[1], anchor="center", width=progressBarWidth)
+        self.progressBarLabel.place(x=progressBarLabelPos[0], y=progressBarLabelPos[1], anchor="center")
         self.root.quit()
 
     def display_agent(self, path):
 
-        img = ImageTk.PhotoImage(Image.open(path).resize((200,200), Image.DEFAULT_STRATEGY))
+        img = ImageTk.PhotoImage(Image.open(path).resize((agentPicSize, agentPicSize), Image.DEFAULT_STRATEGY))
    
-        self.agentPic = Label(self.primaryFrame, image=img)
+        self.agentPic = Label(self.processingFrame, image=img, anchor="center")
         self.agentPic.image_names=img
-        self.agentPic.place(x=250, y=150)
+        self.agentPic.place(x=agentPicPos[0], y=agentPicPos[1])
         self.root.update()
 
     def display_clients(self, clientList):
@@ -102,14 +106,14 @@ class GUI:
         for i, client in enumerate(clientList):
             imgs.append(ImageTk.PhotoImage(Image.open(client).resize((100,100), Image.DEFAULT_STRATEGY)))
 
-            self.clientPics.append(Label(self.primaryFrame, image=imgs[i]))
+            self.clientPics.append(Label(self.processingFrame, image=imgs[i], anchor="center"))
             self.clientPics[i].image_names=imgs[i]
         
         # TODO Generalize
-        self.clientPics[0].place(x=450, y=150)
-        self.clientPics[1].place(x=550, y=150)
-        self.clientPics[2].place(x=450, y=250)
-        self.clientPics[3].place(x=550, y=250)
+        self.clientPics[0].place(x=clientPicPos[0]-clientPicPosIndividualOffset, y=clientPicPos[1]-clientPicPosIndividualOffset)
+        self.clientPics[1].place(x=clientPicPos[0]+clientPicPosIndividualOffset, y=clientPicPos[1]-clientPicPosIndividualOffset)
+        self.clientPics[2].place(x=clientPicPos[0]-clientPicPosIndividualOffset, y=clientPicPos[1]+clientPicPosIndividualOffset)
+        self.clientPics[3].place(x=clientPicPos[0]+clientPicPosIndividualOffset, y=clientPicPos[1]+clientPicPosIndividualOffset)
         self.root.update
 
     def forget_clients(self):
@@ -119,6 +123,8 @@ class GUI:
 
     def load_profiles(self):
         self.mode = 'GENERATE'
+        self.primaryFrame.place_forget()
+        self.processingFrame.place(x=0,y=0)
         imagesFilenameInput = self.open_file_dialog("Select Images Folder", mode='DIR')
         csvDestinationFilenameInput = self.open_file_dialog("Select CSV Destination Folder", mode='SAVE')
         print(type(imagesFilenameInput))
@@ -127,7 +133,7 @@ class GUI:
         # TODO Prompt user to choose where to store csv
         self.csvDestinationFilename = csvDestinationFilenameInput
         self.imagesFilename = imagesFilenameInput
-        self.progressBar.place(x=agentButtonPos[0], y=agentButtonPos[1] + 200)
-        self.progressBarLabel.place(x=agentButtonPos[0], y=agentButtonPos[1] + 300)
+        self.progressBar.place(x=progressBarPos[0], y=progressBarPos[1], anchor="center", width=progressBarWidth)
+        self.progressBarLabel.place(x=progressBarLabelPos[0], y=progressBarLabelPos[1], anchor="center")
         self.root.quit()
 
