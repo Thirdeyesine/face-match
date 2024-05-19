@@ -17,12 +17,3 @@ def get_face_profile(image_path):
         return None
     return np.array(model[0]["embedding"])
 
-
-
-print(np.linalg.norm(get_face_profile("data/stock_twins_1.jpg") - get_face_profile("data/stock_man.jpg")))
-print(np.linalg.norm(get_face_profile("data/stock_twins_1.jpg") - get_face_profile("data/stock_twins_2.jpg")))
-
-# result = DeepFace.verify(
-#   img1_path = "data\stock_twins.JPG",
-#   img2_path = "data\stock_twins_2.JPG",
-# )

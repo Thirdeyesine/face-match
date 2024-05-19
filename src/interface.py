@@ -2,6 +2,7 @@ from config import *
 from tkinter import *
 from tkinter.filedialog import *
 from tkinter import ttk
+from PIL import ImageTk, Image
 import logging
 logger = logging.getLogger(__name__)
 
@@ -34,8 +35,6 @@ class GUI:
         self.clientLabel.place(x=clientLabelPos[0], y=clientLabelPos[1], anchor="center")
         self.agentLabel = Label(self.primaryFrame, textvariable=self.agentFilename)
         self.agentLabel.place(x=agentLabelPos[0], y=agentLabelPos[1], anchor="center")
-        
-
 
         # TODO Save and load the previous client/agent directory on each run.
         # Define and place buttons
@@ -47,7 +46,7 @@ class GUI:
         self.generateProfilesButton.place(x=clientButtonPos[0],y=clientButtonPos[1] + 200)
         self.nextAgentButton = Button(self.primaryFrame, text="Next Agent", command=self.root.quit)
 
-        
+        # Loading bar and text
         self.progressBar = ttk.Progressbar(self.primaryFrame)
         self.progressBarText = StringVar()
         self.progressBarText.set("Awaiting Process")
@@ -87,6 +86,15 @@ class GUI:
         self.progressBar.place(x=agentButtonPos[0], y=agentButtonPos[1] + 200)
         self.progressBarLabel.place(x=agentButtonPos[0], y=agentButtonPos[1] + 300)
         self.root.quit()
+
+    def display_agent(self, path):
+
+        img = ImageTk.PhotoImage(Image.open(path).resize((200,200), Image.DEFAULT_STRATEGY))
+   
+        self.agentPic = Label(self.primaryFrame, image=img)
+        self.agentPic.image_names=img
+        self.agentPic.place(x=250, y=150)
+        self.root.update()
 
     def load_profiles(self):
         self.mode = 'GENERATE'
